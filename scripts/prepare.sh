@@ -3,8 +3,8 @@ set -euo pipefail
 
 eval RAINBOW_DIR=~/.rainbow
 
-export LOCAL_CORE_SRC
-export LOCAL_NEARUP_SRC
+# export LOCAL_CORE_SRC
+# export LOCAL_NEARUP_SRC
 
 eval CORE_SRC=~/.rainbow/core
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" 2>&1 && pwd )"
@@ -36,7 +36,8 @@ eval CURR_DIR=$(pwd)
 cd $CURR_DIR
 else
 echo "Linking the specified local repo from ${LOCAL_CORE_SRC} to ${CORE_SRC}"
-ln -s $LOCAL_CORE_SRC $CORE_SRC
+unlink $CORE_SRC
+ln -sf $LOCAL_CORE_SRC $CORE_SRC
 fi
 
 if test -z "$LOCAL_NEARUP_SRC"
@@ -45,7 +46,8 @@ echo "nearup home not specified..."
 git clone "https://github.com/near/nearup/" $NEARUP_SRC
 else
 echo "Linking the specified local repo from ${LOCAL_NEARUP_SRC} to ${NEARUP_SRC}"
-ln -s $LOCAL_NEARUP_SRC $NEARUP_SRC
+unlink $NEARUP_SRC
+ln -sf $LOCAL_NEARUP_SRC $NEARUP_SRC
 fi
 mkdir -p $NEARUP_LOGS
 

@@ -1,36 +1,40 @@
-const { exec } = require('child_process')
-const path = require('path')
-const { RainbowConfig } = require('rainbow-bridge-lib/config')
+const { exec } = require('child_process');
+const path = require('path');
+const { RainbowConfig } = require('rainbow-bridge-lib/config');
 
 class PrepareCommand {
-  static execute() {
-    var scriptDir = path.resolve(__dirname, '../scripts/prepare.sh')
+    static execute () {
+        var scriptDir = path.resolve(__dirname, '../scripts/prepare.sh');
 
-    const shell = ['bash', scriptDir].join(' ')
+        const shell = ['bash', scriptDir].join(' ');
 
-    const env = {}
-    for (const e in process.env) {
-      env[e] = process.env[e]
+        const env = {};
+        for (const e in process.env) {
+            env[e] = process.env[e];
+        }
+
+        if (!env.LOCAL_CORE_SRC) {
+            env.LOCAL_CORE_SRC =
+          RainbowConfig.getParam('core-src') &&
+          path.resolve(RainbowConfig.getParam('core-src'));
+        }
+        if (!env.LOCAL_NEARUP_SRC) {
+            env.LOCAL_NEARUP_SRC =
+        RainbowConfig.getParam('nearup-src') &&
+        path.resolve(RainbowConfig.getParam('nearup-src'));
+        }
+
+        // @ts-ignore
+        var prepareScript = exec(shell, { env: env });
+        // @ts-ignore
+        prepareScript.stdout.on('data', function (data) {
+            console.log(data.toString());
+        });
+        // @ts-ignore
+        prepareScript.stderr.on('data', function (data) {
+            console.log(data.toString());
+        });
     }
-
-    env.LOCAL_CORE_SRC =
-      RainbowConfig.getParam('core-src') &&
-      path.resolve(RainbowConfig.getParam('core-src'))
-    env.LOCAL_NEARUP_SRC =
-      RainbowConfig.getParam('nearup-src') &&
-      path.resolve(RainbowConfig.getParam('nearup-src'))
-
-    // @ts-ignore
-    var prepareScript = exec(shell, { env: env })
-    // @ts-ignore
-    prepareScript.stdout.on('data', function (data) {
-      console.log(data.toString())
-    })
-    // @ts-ignore
-    prepareScript.stderr.on('data', function (data) {
-      console.log(data.toString())
-    })
-  }
 }
 
-exports.PrepareCommand = PrepareCommand
+exports.PrepareCommand = PrepareCommand;
